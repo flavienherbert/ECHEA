@@ -238,7 +238,9 @@ describe('Analyse et déclarations', () => {
     const r = toRecords(buildDeclarations(analyze([
       ['DUPONT', 'Marie', '2550814168025', 'Menuiserie Test', '20005667900018', 'SST', '15/06/2026', '16/06/2026', 'Admis', ''],
       ['MERCIER', 'Antoine', '1850578006084', 'Transports Test', '44123456700010', 'CACES R489 cat. 1A-3-5', '08/07/2026', '10/07/2026', 'Admis', ''],
+      ['PETIT', 'Jean', '2550814168025', 'Menuiserie Test', '20005667900018', 'MAC SST', '10/09/2026', '10/09/2026', 'Admis', ''],
     ]), sampleCatalogue()));
+    expect(r.JDR.find((x) => x.NOM_TITULAIRE === 'PETIT').NOM_FORMATION).toBe('MAC SST (maintien et actualisation des compétences)');
     const sst = r.JDR.find((x) => x.NOM_TITULAIRE === 'DUPONT');
     const caces = r.JDR.find((x) => x.NOM_TITULAIRE === 'MERCIER');
     expect(sst).toMatchObject({ NOM_FORMATION: 'Sauveteur secouriste du travail (SST)', NOM_JDR: 'Sauveteur secouriste du travail' });

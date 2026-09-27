@@ -120,14 +120,19 @@ export function usedTemplateErrors(trainees, catalogue) {
 /** Longueur minimale d'un intitulé du fichier pour être déclaré tel quel (« SST », « EPI » sont remplacés). */
 export const MIN_DECLARED_NAME = 7;
 
+/** Un intitulé du fichier est explicite s'il n'est ni trop court ni un simple alias du catalogue (« MAC SST », « EPI »). */
+export function isDescriptiveName(raw, template) {
+  const r = cleanCell(raw || '');
+  return r.length >= MIN_DECLARED_NAME && !(template.match || []).includes(normKey(r));
+}
+
 /**
  * Intitulé déclaré au Passeport : celui de l'organisme (colonne Formation), plus précis que la
  * famille du catalogue (« CACES R489 cat. 3 » plutôt que « CACES® (R489, R486…) »). Une abréviation
- * trop courte est remplacée par l'intitulé du catalogue.
+ * est remplacée par l'intitulé du catalogue.
  */
 export function declaredName(raw, template) {
-  const r = cleanCell(raw || '');
-  return r.length >= MIN_DECLARED_NAME ? r.slice(0, 250) : String(template.label || '').slice(0, 250);
+  return (isDescriptiveName(raw, template) ? cleanCell(raw) : String(template.label || '')).slice(0, 250);
 }
 
 /** Détermine le type de déclaration d'un stagiaire. */
@@ -155,7 +160,7 @@ export function buildDeclarations(trainees, catalogue) {
   const declarations = [];
   for (const g of groups.values()) {
     // Même ID_DECLARATION = mêmes données de formation : un seul intitulé par session (le premier explicite du fichier).
-    const named = g.trainees.find((t) => cleanCell(t.formationRaw || '').length >= MIN_DECLARED_NAME);
+    const named = g.trainees.find((t) => isDescriptiveName(t.formationRaw, g.template));
     const name = declaredName(named ? named.formationRaw : '', g.template);
     const baseId = `${slug(g.template.id, 16)}_${g.kind}_${g.dateFin.replace(/-/g, '')}_${stableId(g.key, 8)}`;
     const reference = g.session
