@@ -198,6 +198,13 @@ function savePassages() {
 }
 
 // ---------------------------------------------------------------- vue Déclarer
+function setStep(step) {
+  state.work.step = step;
+  render();
+  main.focus({ preventScroll: true });
+  window.scrollTo({ top: 0 });
+}
+
 function stepper(current) {
   const steps = [['import', '1. Importer'], ['mapping', '2. Colonnes'], ['check', '3. Contrôle'], ['export', '4. Export']];
   const idx = steps.findIndex(([id]) => id === current);
@@ -286,8 +293,8 @@ function viewMapping() {
     const t = state.catalogue.find((c) => c.id === w.formationMap[v.key]);
     const errs = t ? templateErrors(t) : [];
     return h('tr', {},
-      h('td', {}, v.label), h('td', { class: 'num' }, v.count), h('td', {}, sel),
-      h('td', {}, !t ? h('span', { class: 'chip chip-danger' }, 'à associer')
+      h('td', { 'data-label': 'Intitulé' }, h('b', {}, v.label)), h('td', { class: 'num', 'data-label': 'Lignes' }, v.count), h('td', { 'data-label': 'Formation Échéa' }, sel),
+      h('td', { 'data-label': 'État' }, !t ? h('span', { class: 'chip chip-danger' }, 'à associer')
         : errs.length ? h('button', { class: 'btn btn-ghost btn-small', type: 'button', onclick: () => go('formations', { editId: t.id }) }, 'Compléter les codes')
           : h('span', { class: 'chip chip-ok' }, 'prête')));
   });
@@ -318,10 +325,10 @@ function viewMapping() {
     values.length ? h('div', { class: 'panel stack' },
       h('h3', {}, 'Formations du fichier'),
       h('p', { class: 'muted small' }, 'Chaque intitulé est rattaché à une formation du catalogue, qui porte les codes et les durées. Votre choix est retenu pour les prochains imports.'),
-      h('div', { class: 'table-wrap' }, h('table', { class: 'data' }, h('thead', {}, h('tr', {}, h('th', {}, 'Intitulé dans le fichier'), h('th', {}, 'Lignes'), h('th', {}, 'Formation Échéa'), h('th', {}, 'État'))), h('tbody', {}, formationRows))),
+      h('div', { class: 'table-wrap' }, h('table', { class: 'data stack-sm' }, h('thead', {}, h('tr', {}, h('th', {}, 'Intitulé dans le fichier'), h('th', {}, 'Lignes'), h('th', {}, 'Formation Échéa'), h('th', {}, 'État'))), h('tbody', {}, formationRows))),
       unmatched ? h('p', { class: 'small muted' }, `${plural(unmatched, 'intitulé non associé', 'intitulés non associés')} : les lignes concernées seront signalées.`) : null) : null,
     resultOpt,
-    h('div', { class: 'row end' }, h('button', { class: 'btn btn-primary', type: 'button', id: 'run-check', disabled: !canCheck, onclick: () => { runAnalysis(); w.step = 'check'; track('check'); render(); } }, `Contrôler ${plural(lines, 'ligne', 'lignes')}`)));
+    h('div', { class: 'row end' }, h('button', { class: 'btn btn-primary', type: 'button', id: 'run-check', disabled: !canCheck, onclick: () => { runAnalysis(); w.added = savePassages(); track('check'); setStep('check'); } }, `Contrôler ${plural(lines, 'ligne', 'lignes')}`)));
 }
 
 function radio(name, value, label) {
@@ -383,13 +390,13 @@ function viewCheck() {
     h('div', { class: 'spread' }, h('h3', {}, `Lignes à corriger (${errorRows.length})`),
       h('button', { class: 'btn btn-ghost btn-small', type: 'button', onclick: downloadErrorReport }, 'Télécharger la liste (Excel)')),
     h('p', { class: 'muted small' }, 'Ces lignes sont écartées du fichier pour qu’il ne soit pas rejeté. Corrigez-les ici ou dans votre fichier, puis relancez.'),
-    h('div', { class: 'table-wrap' }, h('table', { class: 'data' },
+    h('div', { class: 'table-wrap' }, h('table', { class: 'data stack-sm' },
       h('thead', {}, h('tr', {}, h('th', {}, 'Ligne'), h('th', {}, 'Stagiaire'), h('th', {}, 'Problème'))),
       h('tbody', {}, shown.map((t) => h('tr', {},
-        h('td', { class: 'num' }, t.rowNumber),
-        h('td', {}, h('b', {}, t.nom || '(sans nom)'), t.prenom ? ` ${t.prenom}` : '', h('div', { class: 'muted small' }, t.formationRaw || '')),
-        h('td', {}, t.issues.map((x) => h('div', {}, h('span', { class: `issue ${x.level}` }, `${FIELD_LABEL[x.field] || x.field} : ${x.message}`),
-          x.level === 'error' && EDITABLE.includes(x.field) && w.mapping[x.field] !== undefined ? inlineFix(t, x.field) : null)))))))),
+        h('td', { class: 'num', 'data-label': 'Ligne' }, t.rowNumber),
+        h('td', { 'data-label': 'Stagiaire' }, h('b', {}, t.nom || '(sans nom)'), t.prenom ? ` ${t.prenom}` : '', h('div', { class: 'muted small' }, t.formationRaw || '')),
+        h('td', { 'data-label': 'Problème' }, t.issues.map((x) => h('div', {}, h('span', { class: `issue ${x.level}` }, `${FIELD_LABEL[x.field] || x.field} : ${x.message}`),
+          x.level === 'error' && EDITABLE.includes(x.field) && w.mapping[x.field] !== undefined && !/manquant pour|doublon/.test(x.message) ? inlineFix(t, x.field) : null)))))))),
     errorRows.length > shown.length ? h('p', { class: 'small muted' }, `… et ${errorRows.length - shown.length} autres lignes (voir la liste téléchargeable).`) : null) : null;
 
   const warnBlock = warnRows.length ? h('details', { class: 'panel more' },
@@ -398,12 +405,12 @@ function viewCheck() {
 
   const declTable = w.declarations.length ? h('div', { class: 'panel stack' },
     h('h3', {}, `Déclarations prêtes (${w.declarations.length})`),
-    h('div', { class: 'table-wrap' }, h('table', { class: 'data' },
+    h('div', { class: 'table-wrap' }, h('table', { class: 'data stack-sm' },
       h('thead', {}, h('tr', {}, h('th', {}, 'Formation'), h('th', {}, 'Type'), h('th', {}, 'Dates'), h('th', {}, 'Stagiaires'), h('th', {}, 'À déclarer avant'))),
       h('tbody', {}, w.declarations.map((d) => h('tr', {},
-        h('td', {}, d.template.label), h('td', {}, h('span', { class: `chip ${d.kind === 'JDR' ? 'chip-brand' : 'chip-muted'}`, title: d.kind === 'JDR' ? 'Justificatif de réussite' : 'Attestation de formation' }, d.kind)),
-        h('td', {}, d.dateDebut === d.dateFin ? toFr(d.dateFin) : `${toFr(d.dateDebut)} → ${toFr(d.dateFin)}`),
-        h('td', { class: 'num' }, d.trainees.length), h('td', {}, deadlineChip(d.deadline))))))),
+        h('td', { 'data-label': 'Formation' }, h('b', {}, d.template.label)), h('td', { 'data-label': 'Type' }, h('span', { class: `chip ${d.kind === 'JDR' ? 'chip-brand' : 'chip-muted'}`, title: d.kind === 'JDR' ? 'Justificatif de réussite' : 'Attestation de formation' }, d.kind)),
+        h('td', { 'data-label': 'Dates' }, d.dateDebut === d.dateFin ? toFr(d.dateFin) : `${toFr(d.dateDebut)} → ${toFr(d.dateFin)}`),
+        h('td', { class: 'num', 'data-label': 'Stagiaires' }, d.trainees.length), h('td', { 'data-label': 'À déclarer avant' }, deadlineChip(d.deadline))))))),
     h('p', { class: 'small muted' }, 'Délais officiels : formations 2026, 6 mois après la fin du trimestre ; à partir de 2027, 3 mois. ', h('a', { href: SOURCES.obligations, target: '_blank', rel: 'noopener' }, 'Source'))) : null;
 
   const before = w.trainees.filter((t) => !hasError(t) && t.dateFin && t.dateFin < OBLIGATION_START).length;
@@ -421,8 +428,8 @@ function viewCheck() {
     before && !state.options.includeBeforeObligation ? h('p', { class: 'notice small' }, `${plural(before, 'stagiaire formé', 'stagiaires formés')} avant le 01/09/2025 : déclaration non obligatoire, ${before > 1 ? 'ils sont exclus' : 'il est exclu'} du fichier (modifiable à l’export). Ils restent dans le suivi des recyclages.`) : null,
     companyBlock, errorTable, declTable, warnBlock,
     h('div', { class: 'spread' },
-      h('button', { class: 'btn btn-secondary', type: 'button', onclick: () => { w.step = 'mapping'; render(); } }, 'Retour aux colonnes'),
-      h('button', { class: 'btn btn-primary', type: 'button', id: 'go-export', disabled: !w.declarations.length, onclick: () => { w.step = 'export'; w.added = savePassages(); render(); } },
+      h('button', { class: 'btn btn-secondary', type: 'button', onclick: () => setStep('mapping') }, 'Retour aux colonnes'),
+      h('button', { class: 'btn btn-primary', type: 'button', id: 'go-export', disabled: !w.declarations.length, onclick: () => { w.added = savePassages(); setStep('export'); } },
         w.declarations.length ? `Préparer le fichier (${plural(valid, 'stagiaire', 'stagiaires')})` : 'Aucune ligne prête à déclarer')));
 }
 
@@ -533,7 +540,7 @@ function viewExport() {
         h('a', { href: SOURCES.guideAdf, target: '_blank', rel: 'noopener' }, 'Guide ADF'), ' · ', h('a', { href: SOURCES.guideJdr, target: '_blank', rel: 'noopener' }, 'Guide JDR'))),
     h('p', { class: 'notice notice-ok small' }, `Suivi des recyclages mis à jour${w.added ? ` : ${plural(w.added, 'nouveau passage', 'nouveaux passages')}` : ''}. `, h('button', { class: 'btn btn-ghost btn-small', type: 'button', onclick: () => go('recyclages') }, 'Voir les recyclages')),
     h('div', { class: 'spread' },
-      h('button', { class: 'btn btn-secondary', type: 'button', onclick: () => { w.step = 'check'; render(); } }, 'Retour au contrôle'),
+      h('button', { class: 'btn btn-secondary', type: 'button', onclick: () => setStep('check') }, 'Retour au contrôle'),
       h('button', { class: 'btn btn-secondary', type: 'button', onclick: () => { state.work = null; render(); } }, 'Importer un autre fichier')));
 }
 

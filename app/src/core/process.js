@@ -72,7 +72,7 @@ export function analyzeRows(rows, mapping, formationMap, ctx) {
     } else if (entreprise && known?.siret) {
       siret = known.siret;
     } else if (entreprise) {
-      add('siret', 'error', `SIRET manquant pour « ${entreprise} » (renseignez-le une fois dans l'onglet Entreprises)`);
+      add('siret', 'error', `SIRET manquant pour « ${entreprise} » : saisissez-le une fois, il sera retenu`);
     }
 
     const resultRaw = text(row, mapping.resultat);

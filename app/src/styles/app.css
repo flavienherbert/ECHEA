@@ -114,3 +114,16 @@ pre.preview { margin: 0; padding: 12px; background: var(--bg-sunk); border-radiu
 @keyframes spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) { .spinner { animation-duration: 2.4s; } .toast { transition: none; } }
 details.more summary { cursor: pointer; font-weight: 600; color: var(--brand); }
+
+@media (max-width: 640px) {
+  table.stack-sm thead { display: none; }
+  table.stack-sm, table.stack-sm tbody, table.stack-sm tr, table.stack-sm td { display: block; width: 100%; }
+  table.stack-sm tr { padding: 10px 0; border-bottom: 1px solid var(--line); }
+  table.stack-sm tr:last-child { border-bottom: 0; }
+  table.stack-sm td { border: 0; padding: 3px 12px; text-align: left; }
+  table.stack-sm td.num { text-align: left; }
+  table.stack-sm td[data-label]::before { content: attr(data-label) " : "; font-size: 12px; font-weight: 600; color: var(--muted); }
+  table.stack-sm td[data-label="Problème"]::before, table.stack-sm td[data-label="Formation Échéa"]::before { display: block; }
+  .inline-fix { max-width: none; }
+  .app-main { padding-top: 16px; }
+}
