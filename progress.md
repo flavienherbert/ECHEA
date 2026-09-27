@@ -1,0 +1,85 @@
+# progress.md — continuité de la mission Échéa
+
+Fichier de reprise : un autre agent doit pouvoir continuer à partir d'ici. Mettre à jour à chaque étape.
+Légende : DONE · WAITING (attend une action) · BLOCKED · TODO.
+
+## Mission
+
+Brief « AI Autonomous Founder » de Flavien Herbert (Vire, 14) : choisir UN business, le construire, le tester, le déployer, préparer la vente et l'automatisation, sans dépense ni envoi sans son accord.
+
+## Décision business (DONE — 26/09/2026)
+
+**Échéa** : web app local-first pour organismes de formation santé-sécurité. Excel de stagiaires → contrôles → CSV officiel du Passeport de prévention (ADF + JDR) + relances de recyclages aux entreprises clientes. Gratuit (25 stagiaires/export) · Pro 29 € HT/mois ou 290 € HT/an.
+Voir [`docs/business-decision.md`](docs/business-decision.md).
+
+## Historique des sessions
+
+- **Session 1 (26/09, 18 h 21 → 19 h 59)** : audit des outils, 3 agents de recherche, décision, 25 prospects (lot 1). Coupée par la limite d'usage.
+- **Session 2 (26/09, 22 h 58 → 23 h 40)** : dépôt GitHub cloné, 7 agents lancés (codes officiels, référentiels, réglementation, concurrence, QA prospects, lot 2, pages légales). Coupée par la limite d'usage ; 3 agents sur 7 ont fini, le QA et le lot 2 ont laissé leurs fichiers.
+- **Session 3 (27/09, depuis 3 h 50)** : récupération des sorties sur disque, construction.
+
+Leçon : les agents en parallèle consomment vite la limite d'usage. Pousser sur GitHub à chaque étape.
+
+## Outils (audit du 26/09, revérifié le 27/09)
+
+| Capacité | Statut |
+|---|---|
+| Terminal Linux, Node 22, Python 3, git | AVAILABLE |
+| Chromium + Playwright (tests) | AVAILABLE |
+| Recherche web (WebSearch / WebFetch) | AVAILABLE (quota par session) |
+| Accès réseau du shell | Registres npm/PyPI et GitHub seulement (gouv.fr, data.gouv.fr, github.io, stripe.com bloqués) |
+| GitHub `flavienherbert/ECHEA` (public) | AVAILABLE (push via le proxy git) |
+| Stripe (MCP) | AVAILABLE, compte `acct_1SRCunEGJoc9TCKl` en **mode test** |
+| Gmail (brouillons) | AVAILABLE — aucun envoi sans accord |
+| Google Drive | AVAILABLE |
+| Tâches planifiées | AVAILABLE |
+| Vercel, Netlify, Canva, Exa | NOT CONNECTED (à reconnecter par l'utilisateur) |
+| Registrar de domaine | NOT AVAILABLE |
+| Analytics | NOT AVAILABLE (GoatCounter prévu, compte à créer) |
+| Chrome de l'utilisateur | NOT CONNECTED |
+
+## État actuel
+
+| Élément | Statut |
+|---|---|
+| Recherche (réglementation, concurrence, format) | DONE — `docs/research/` |
+| Prospects | DONE (37 dont 25 revérifiés) — données personnelles hors Git, dans `sales/private/` (ignoré) |
+| App | TODO |
+| Landing + pages légales | TODO |
+| Tests | TODO |
+| Déploiement GitHub Pages | TODO |
+| Stripe (mode test) | TODO |
+| Messages + brouillons Gmail | TODO |
+| Agents / orchestrateur / automatisations | TODO |
+| Stratégie, README, supports | TODO |
+
+## Décisions importantes
+
+1. Local-first, sans serveur : aucun NIR transmis ni mémorisé (seules les données utiles aux recyclages sont gardées dans le navigateur).
+2. Hébergement GitHub Pages (gratuit, repo public). Conséquence : aucune donnée personnelle de prospects dans Git.
+3. Paiement : Stripe Payment Links ; accès Pro par clé de licence signée Ed25519, vérifiée dans le navigateur.
+4. Pas de promesse de dépôt automatique : aucune API de dépôt n'existe ; l'OF importe lui-même le fichier sur le portail.
+5. Durées de recyclage présentées comme des recommandations (INRS, référentiels), jamais comme « la loi ».
+6. Sanction citée comme « jusqu'à 2 000 € par manquement » (plafond), jamais « par stagiaire ».
+
+## Variables nécessaires (jamais dans Git)
+
+- `ECHEA_LICENSE_PRIVATE_KEY` : clé privée Ed25519 de signature des licences (hors dépôt).
+- Liens de paiement Stripe (publics, dans `app/src/config.js`).
+- `GOATCOUNTER_CODE` (optionnel) : identifiant GoatCounter si l'analytics est activé.
+
+## Actions bloquées / en attente de l'utilisateur
+
+- Statut juridique, SIRET, adresse pour les mentions légales et les CGV.
+- Passage de Stripe en mode live.
+- Achat éventuel du domaine `echea.fr`.
+- Validation avant tout envoi d'email de prospection.
+
+## Tests effectués
+
+(aucun pour l'instant)
+
+## Problèmes rencontrés
+
+- Limite d'usage atteinte deux fois (sessions 1 et 2).
+- Les 19 fiches officielles de codes sont des .xlsx illisibles par WebFetch et inaccessibles au shell : Échéa ne pré-remplit pas les codes, il contrôle leur format.

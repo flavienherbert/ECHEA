@@ -1,0 +1,23 @@
+# Dépendances et builds
+node_modules/
+app/dist/
+.vite/
+coverage/
+test-results/
+playwright-report/
+
+# Secrets : ne jamais committer
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+scripts/license/keys/
+secrets/
+
+# Données personnelles (prospects, contacts) : jamais dans un dépôt public
+sales/private/
+
+# Divers
+.DS_Store
+*.log
