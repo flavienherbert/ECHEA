@@ -71,10 +71,10 @@ export function upcomingRecyclages(passages, catalogue, opts) {
     g.items.push({ ...p, due, days, label: t.recycleLabel || t.label, unitPrice: Number(t.unitPrice) || 0, status: days < 0 ? 'expire' : days <= 60 ? 'urgent' : days <= 120 ? 'a-relancer' : 'plus-tard' });
   }
   const list = [...groups.values()].map((g) => {
-    g.items.sort((a, b) => (a.due < b.due ? -1 : 1));
+    g.items.sort((a, b) => (a.due === b.due ? a.nom.localeCompare(b.nom, 'fr') : a.due < b.due ? -1 : 1));
     return { ...g, firstDue: g.items[0].due, total: g.items.length, amount: g.items.reduce((s, i) => s + i.unitPrice, 0) };
   });
-  list.sort((a, b) => (a.firstDue < b.firstDue ? -1 : 1));
+  list.sort((a, b) => (a.firstDue === b.firstDue ? (b.total - a.total) || a.entreprise.localeCompare(b.entreprise, 'fr') : a.firstDue < b.firstDue ? -1 : 1));
   return list;
 }
 

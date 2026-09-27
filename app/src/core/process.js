@@ -157,7 +157,7 @@ export function buildDeclarations(trainees, catalogue) {
       });
     }
   }
-  declarations.sort((a, b) => (a.dateFin < b.dateFin ? -1 : a.dateFin > b.dateFin ? 1 : a.id.localeCompare(b.id)));
+  declarations.sort((a, b) => (a.dateFin < b.dateFin ? -1 : a.dateFin > b.dateFin ? 1 : a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
   return declarations;
 }
 
