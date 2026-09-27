@@ -296,3 +296,34 @@ describe('Licences', () => {
     expect(publicKeyHex(createPrivateKey(fs.readFileSync(path, 'utf8')))).toBe(LICENSE_PUBLIC_KEY);
   });
 });
+
+describe('Fichier d’exemple', () => {
+  it('se lit, se contrôle et produit des déclarations cohérentes', async () => {
+    const fs = await import('node:fs');
+    const buf = fs.readFileSync(new URL('../../app/public/exemple-stagiaires.xlsx', import.meta.url));
+    const sheets = await readWorkbook({ name: 'exemple-stagiaires.xlsx', size: buf.length, arrayBuffer: async () => buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength) });
+    const rows = sheets[0].rows;
+    const { index } = findHeaderRow(rows);
+    const headers = rows[index].map(String);
+    const mapping = autoMap(headers);
+    expect(Object.keys(mapping).sort()).toEqual(['dateDebut', 'dateFin', 'emailEntreprise', 'entreprise', 'formation', 'nir', 'nom', 'prenom', 'resultat', 'session', 'siret'].sort());
+    const cat = sampleCatalogue();
+    const fm = {};
+    for (const r of rows.slice(index + 1)) { const t = matchFormation(r[mapping.formation], cat); if (t) fm[normKey(r[mapping.formation])] = t.id; }
+    const trainees = analyzeRows(rows.slice(index + 1), mapping, fm, { catalogue: cat, companies: {}, today: '2026-09-27', firstRowNumber: index + 2 });
+    expect(trainees).toHaveLength(28);
+    const errs = trainees.filter(hasError).map((t) => `${t.rowNumber}:${t.issues.find((i) => i.level === 'error').field}`);
+    expect(errs).toEqual(['8:nir', '13:siret', '14:siret', '15:siret', '23:nir', '27:nir', '29:dateFin']);
+    expect(trainees[0].dateDebut).toBe('2024-10-16');
+    const decl = buildDeclarations(trainees.filter((t) => t.dateFin >= '2025-09-01'), cat);
+    const summary = decl.map((d) => `${d.template.id}:${d.kind}:${d.trainees.length}:${d.deadline}`);
+    expect(summary).toEqual([
+      'sst:JDR:1:2026-09-30', 'mac-sst:ADF:1:2026-09-30', 'mac-sst:JDR:4:2026-09-30',
+      'habilitation-electrique:ADF:2:2026-12-31', 'caces:ADF:1:2027-03-31', 'caces:JDR:3:2027-03-31', 'incendie:ADF:4:2027-03-31',
+    ]);
+    const passages = passagesFromTrainees(trainees, cat);
+    const groups = upcomingRecyclages(passages, cat, { today: '2026-09-27' });
+    expect(groups[0].entreprise).toBe('Menuiserie Lefèvre');
+    expect(groups[0].items[0].due).toBe('2026-10-16');
+  });
+});

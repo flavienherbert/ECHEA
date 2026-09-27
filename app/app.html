@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Échéa — Application</title>
+  <meta name="description" content="Importez votre fichier de stagiaires, corrigez les erreurs et téléchargez le fichier d'import du Passeport de prévention. Traitement 100 % local.">
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#0f5b53">
+  <meta name="robots" content="noindex">
+  <link rel="stylesheet" href="./src/styles/app.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="app-bar">
+      <a class="brand" href="./" aria-label="Échéa, retour au site">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="1" y="3" width="28" height="27" rx="7" fill="var(--brand)"/><path d="M8.5 17.2l4.4 4.4 9.6-10" fill="none" stroke="var(--on-brand)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="26.5" cy="5.5" r="4.5" fill="var(--accent)" stroke="var(--bg)" stroke-width="2"/></svg>
+        <span>Échéa</span>
+      </a>
+      <span id="plan-badge" class="chip chip-muted">Gratuit</span>
+    </div>
+    <nav class="tabs" id="tabs" role="tablist" aria-label="Sections de l'application"></nav>
+  </header>
+  <div id="demo-banner" class="demo-banner" hidden>Mode démo : fichier et données fictifs, rien n'est enregistré. <a href="./app.html">Quitter la démo</a></div>
+  <main id="main" class="app-main" tabindex="-1">
+    <noscript><p class="notice notice-warn">Échéa fonctionne dans votre navigateur : activez JavaScript pour l'utiliser.</p></noscript>
+  </main>
+  <footer class="app-footer">
+    <span>Traitement 100 % local : aucune donnée ne quitte votre navigateur.</span>
+    <a href="./confidentialite.html">Confidentialité</a>
+    <a href="./cgv.html">CGV</a>
+    <a href="./mentions-legales.html">Mentions légales</a>
+  </footer>
+  <dialog id="dialog" class="dialog"></dialog>
+  <script type="module" src="./src/ui/app.js"></script>
+</body>
+</html>
