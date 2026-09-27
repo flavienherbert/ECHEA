@@ -234,6 +234,38 @@ describe('Analyse et déclarations', () => {
     expect(buildDeclarations(analyze(rows, cat), cat)).toHaveLength(0);
   });
 
+  it('déclare l’intitulé du fichier, sauf abréviation trop courte', () => {
+    const r = toRecords(buildDeclarations(analyze([
+      ['DUPONT', 'Marie', '2550814168025', 'Menuiserie Test', '20005667900018', 'SST', '15/06/2026', '16/06/2026', 'Admis', ''],
+      ['MERCIER', 'Antoine', '1850578006084', 'Transports Test', '44123456700010', 'CACES R489 cat. 1A-3-5', '08/07/2026', '10/07/2026', 'Admis', ''],
+    ]), sampleCatalogue()));
+    const sst = r.JDR.find((x) => x.NOM_TITULAIRE === 'DUPONT');
+    const caces = r.JDR.find((x) => x.NOM_TITULAIRE === 'MERCIER');
+    expect(sst).toMatchObject({ NOM_FORMATION: 'Sauveteur secouriste du travail (SST)', NOM_JDR: 'Sauveteur secouriste du travail' });
+    expect(caces).toMatchObject({ NOM_FORMATION: 'CACES R489 cat. 1A-3-5', NOM_JDR: 'CACES R489 cat. 1A-3-5' });
+  });
+
+  it('ne met une fin de validité que sur un justificatif ou une attestation qui en a une', () => {
+    const r = toRecords(buildDeclarations(analyze([
+      ['DUPONT', 'Marie', '2550814168025', 'Menuiserie Test', '20005667900018', 'SST', '15/06/2026', '16/06/2026', 'Admis', ''],
+      ['MARTIN', 'Paul', '1850578006084', 'Menuiserie Test', '20005667900018', 'SST', '15/06/2026', '16/06/2026', 'Non admis', ''],
+      ['RIVIERE', 'Zoé', '2550814168025', 'Garage Test', '44123456700010', 'AIPR opérateur', '01/07/2026', '01/07/2026', '', ''],
+    ]), sampleCatalogue()));
+    expect(r.JDR.find((x) => x.NOM_TITULAIRE === 'DUPONT').DATE_FIN_VALIDITE).toBe('15/06/2028');
+    expect(r.ADF.find((x) => x.NOM_TITULAIRE === 'MARTIN').DATE_FIN_VALIDITE).toBe('');
+    expect(r.ADF.find((x) => x.NOM_TITULAIRE === 'RIVIERE').DATE_FIN_VALIDITE).toBe('30/06/2031');
+  });
+
+  it('repère un doublon même si le n° de session diffère par la casse ou les espaces', () => {
+    const cat = sampleCatalogue();
+    const withSession = [
+      ['DUPONT', 'Marie', '2550814168025', 'Menuiserie Test', '20005667900018', 'SST', '15/06/2026', '16/06/2026', 'Admis', '', 'SST-2026-06'],
+      ['DUPONT', 'Marie', '2550814168025', 'Menuiserie Test', '20005667900018', 'SST', '15/06/2026', '16/06/2026', 'Admis', '', ' sst-2026-06 '],
+    ];
+    const t = analyzeRows(withSession, { ...MAP, session: 10 }, { [normKey('SST')]: 'sst' }, { catalogue: cat, companies: {}, today: '2026-09-27' });
+    expect(t[1].issues.find((i) => i.field === 'nir').message).toMatch(/doublon de la ligne 2/);
+  });
+
   it('nomme le fichier sans caractère interdit', () => {
     const n = exportFileName('ADF', 'Sécurité & Prévention : "Caen"', '2026-09-27', 12);
     expect(n).toBe('PASSEPORT_ADF_SECURITE_PREVENTION_CAEN_20260927_12_STAGIAIRES.csv');

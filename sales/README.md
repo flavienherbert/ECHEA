@@ -16,4 +16,4 @@ Liens de paiement (Stripe, **mode test** tant que le compte n'est pas en live) :
 - Pro annuel : https://buy.stripe.com/test_8x25kD9TQfJZ5mqcy1bfO01
 - Offre pilote, 3 mois offerts, 10 places : https://buy.stripe.com/test_7sYfZhea6gO38yCapTbfO02
 
-Après chaque paiement : `node scripts/license/license.mjs issue --org "Organisme" --email client@exemple.fr --months 13`, puis envoyer la clé (voir `workflows/onboarding-client.md`).
+Après chaque paiement : `node scripts/license/license.mjs issue --org "Organisme" --email client@exemple.fr --months 13` (annuel ; `--months 4` pour le mensuel ou le pilote, renouvelée chaque trimestre), puis envoyer la clé (voir `workflows/onboarding-client.md`).

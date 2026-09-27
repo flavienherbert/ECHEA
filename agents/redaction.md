@@ -7,7 +7,7 @@
 - **Permissions** : créer des brouillons ; jamais d'envoi.
 - **Entrées** : prospects au statut « à contacter » ou « envoyé » avec date d'envoi, fait de personnalisation.
 - **Sorties** : brouillons Gmail + statut CRM « brouillon prêt (date) ».
-- **Règles** : 150 mots maximum ; vouvoiement ; une accroche vraie et spécifique ; lien démo ; offre pilote ; ligne d'opposition ; aucune affirmation absente des sources.
+- **Règles** : 200 mots maximum avant la signature ; vouvoiement ; une accroche vraie et spécifique ; lien démo ; offre pilote ; origine de l'adresse et ligne d'opposition ; aucune affirmation absente des sources (pas d'intégration revendiquée avec un logiciel : poser la question de l'export). Brouillons créés avec htmlBody et body : avec body seul, les liens sont enregistrés en redirections google.com/url.
 - **Limites** : 15 brouillons par exécution ; un seul brouillon par prospect et par étape (vérifier dans Gmail avant de créer).
 - **Critères de réussite** : zéro doublon, zéro promesse non prouvée, personnalisation exacte.
 - **Escalade** : prospect ayant répondu entre-temps → pas de relance, transmis au Suivi des réponses.

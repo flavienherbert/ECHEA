@@ -165,6 +165,21 @@ test('9. Mode démo et affichage mobile', async ({ page }) => {
   await page.locator('#run-check').click();
   await expect(page.locator('.kpi').first()).toContainText('28');
   await noHorizontalScroll(page);
+
+  // Le fichier fictif s'exporte (nom marqué DEMO) ; un fichier réel importé en démo ne s'exporte pas.
+  await page.locator('#go-export').click();
+  await expect(page.locator('#dl-jdr')).toBeEnabled();
+  const [demoFile] = await Promise.all([page.waitForEvent('download'), page.locator('#dl-jdr').click()]);
+  expect(demoFile.suggestedFilename()).toMatch(/^PASSEPORT_DEMO_JDR_/);
+  await page.getByRole('button', { name: 'Importer un autre fichier' }).click();
+  await page.locator('#file-input').setInputFiles({ name: 'mes-stagiaires.xlsx', mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', buffer: readFileSync(SAMPLE) });
+  await page.locator('#run-check').click();
+  await page.locator('#go-export').click();
+  await expect(page.locator('#demo-locked')).toBeVisible();
+  await expect(page.locator('#dl-jdr')).toBeDisabled();
+  await expect(page.locator('#dl-adf')).toBeDisabled();
+  await noHorizontalScroll(page);
+
   const stored = await page.evaluate(() => localStorage.getItem('echea:v1'));
   expect(stored).toBeNull();
 });

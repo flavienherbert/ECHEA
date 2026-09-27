@@ -97,7 +97,7 @@ export function analyzeRows(rows, mapping, formationMap, ctx) {
   const seen = new Map();
   for (const t of trainees) {
     if (!t.nir || t.issues.some((x) => x.field === 'nir' && x.level === 'error')) continue;
-    const key = [t.nir, t.templateId, t.dateDebut, t.dateFin, t.session].join('|');
+    const key = [t.nir, t.templateId, t.dateDebut, t.dateFin, normKey(t.session)].join('|');
     if (seen.has(key)) t.issues.push({ field: 'nir', level: 'error', message: `doublon de la ligne ${seen.get(key)} (même stagiaire, même session)` });
     else seen.set(key, t.rowNumber);
   }
@@ -115,6 +115,19 @@ export function usedTemplateErrors(trainees, catalogue) {
     if (errs.length) out[t.id] = errs;
   }
   return out;
+}
+
+/** Longueur minimale d'un intitulé du fichier pour être déclaré tel quel (« SST », « EPI » sont remplacés). */
+export const MIN_DECLARED_NAME = 7;
+
+/**
+ * Intitulé déclaré au Passeport : celui de l'organisme (colonne Formation), plus précis que la
+ * famille du catalogue (« CACES R489 cat. 3 » plutôt que « CACES® (R489, R486…) »). Une abréviation
+ * trop courte est remplacée par l'intitulé du catalogue.
+ */
+export function declaredName(raw, template) {
+  const r = cleanCell(raw || '');
+  return r.length >= MIN_DECLARED_NAME ? r.slice(0, 250) : String(template.label || '').slice(0, 250);
 }
 
 /** Détermine le type de déclaration d'un stagiaire. */
@@ -141,6 +154,9 @@ export function buildDeclarations(trainees, catalogue) {
   }
   const declarations = [];
   for (const g of groups.values()) {
+    // Même ID_DECLARATION = mêmes données de formation : un seul intitulé par session (le premier explicite du fichier).
+    const named = g.trainees.find((t) => cleanCell(t.formationRaw || '').length >= MIN_DECLARED_NAME);
+    const name = declaredName(named ? named.formationRaw : '', g.template);
     const baseId = `${slug(g.template.id, 16)}_${g.kind}_${g.dateFin.replace(/-/g, '')}_${stableId(g.key, 8)}`;
     const reference = g.session
       ? cleanCell(g.session).slice(0, 280)
@@ -151,7 +167,7 @@ export function buildDeclarations(trainees, catalogue) {
       const id = chunks > 1 ? `${baseId}_P${c + 1}` : baseId;
       declarations.push({
         id, baseId, reference: chunks > 1 ? `${reference}_P${c + 1}`.slice(0, 280) : reference,
-        kind: g.kind, template: g.template, dateDebut: g.dateDebut, dateFin: g.dateFin,
+        kind: g.kind, template: g.template, name, dateDebut: g.dateDebut, dateFin: g.dateFin,
         deadline, deadlineLabel: label,
         trainees: g.trainees.slice(c * MAX_PER_DECLARATION, (c + 1) * MAX_PER_DECLARATION),
       });
@@ -180,7 +196,11 @@ export function toRecords(declarations) {
   for (const d of declarations) {
     const tf = trainingFields(d.template);
     const debutValidite = d.dateFin;
-    const finValidite = d.template.validityMonths ? validityEnd(debutValidite, d.template.validityMonths) : '';
+    // La durée de validité est celle du certificat (JDR) ou d'une attestation qui a sa propre validité (AIPR, amiante).
+    // Une ADF émise pour un échec à une formation certifiante (SST non admis…) n'en porte pas.
+    const hasValidity = d.template.validityMonths > 0 && (d.kind === 'JDR' || d.template.declareAs !== 'JDR');
+    const finValidite = hasValidity ? validityEnd(debutValidite, d.template.validityMonths) : '';
+    const name = d.name || declaredName('', d.template);
     for (const t of d.trainees) {
       const employer = t.siret
         ? { PRESENCE_EMPLOYEUR: 'OUI', SIRET_EMPLOYEUR: t.siret, REFERENCE_EMPLOYEUR: '' }
@@ -198,7 +218,7 @@ export function toRecords(declarations) {
       if (d.kind === 'ADF') {
         out.ADF.push({
           ...common, ...tf,
-          NOM_FORMATION: d.template.label,
+          NOM_FORMATION: name,
           DATE_DEBUT_FORMATION: toFr(d.dateDebut),
           DATE_FIN_FORMATION: toFr(d.dateFin),
         });
@@ -206,10 +226,10 @@ export function toRecords(declarations) {
         out.JDR.push({
           ...common, ...tf,
           TYPE_JDR: d.template.jdrType || 'CERTIFICAT',
-          NOM_JDR: d.template.jdrName || d.template.label,
+          NOM_JDR: (d.template.jdrName || name).slice(0, 255),
           NOM_OPTION_SPECIALITE: '', MODE_OBTENTION: '',
           PRESENCE_FORMATION: 'OUI',
-          NOM_FORMATION: d.template.label,
+          NOM_FORMATION: name,
           DATE_DEBUT_FORMATION: toFr(d.dateDebut),
           DATE_FIN_FORMATION: toFr(d.dateFin),
           RESULTAT_OBTENU: '', MENTION_OBTENUE: '', LIEN_PREUVE: '', IDENTIFIANT_PREUVE: '',

@@ -2,7 +2,7 @@
 
 Votre Excel de stagiaires, prêt pour le Passeport de prévention.
 
-Échéa est une application web pour les organismes de formation santé-sécurité (SST, incendie, habilitation électrique, CACES…). Elle importe le fichier de stagiaires tel quel, contrôle chaque ligne (NIR et sa clé, nom de naissance, SIRET, dates, codes, règles conditionnelles, doublons), génère les fichiers d'import officiels du Passeport de prévention (attestations ADF, 20 colonnes, et justificatifs de réussite JDR, 29 colonnes) et calcule les recyclages à relancer auprès des entreprises clientes.
+Échéa est une application web pour les organismes de formation santé-sécurité (SST, incendie, habilitation électrique, CACES…). Elle importe le fichier de stagiaires tel quel, contrôle chaque ligne (NIR et sa clé, nom de naissance, SIRET, dates, codes, règles conditionnelles, doublons), génère les fichiers d'import au format officiel du Passeport de prévention (attestations ADF, 20 colonnes, et justificatifs de réussite JDR, 29 colonnes) et calcule les recyclages à relancer auprès des entreprises clientes.
 
 **Tout se passe dans le navigateur** : aucun fichier ni NIR n'est envoyé à un serveur, et les NIR ne sont jamais enregistrés.
 
@@ -43,7 +43,8 @@ La clé privée de signature n'est **jamais** dans le dépôt (par défaut `~/.e
 
 ```bash
 node scripts/license/license.mjs init                                  # une seule fois
-node scripts/license/license.mjs issue --org "OF Exemple" --email client@exemple.fr --months 13
+node scripts/license/license.mjs issue --org "OF Exemple" --email client@exemple.fr --months 13   # annuel
+node scripts/license/license.mjs issue --org "OF Exemple" --email client@exemple.fr --months 4    # mensuel ou pilote, renouvelée chaque trimestre
 ```
 
 La clé publique correspondante est dans `app/src/config.js` (`LICENSE_PUBLIC_KEY`).

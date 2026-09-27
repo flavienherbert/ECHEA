@@ -74,7 +74,7 @@ page('cgv.html', 'Conditions générales', 'Conditions générales de vente et d
 <li>Les durées de validité et de recyclage proposées par défaut sont des repères (référentiels, recommandations) que le Client vérifie et adapte.</li>
 </ul>
 <h2>3. Accès, version gratuite et abonnement Pro</h2>
-<p>L’application est accessible sans compte. La version gratuite permet les contrôles et l’export de sessions complètes jusqu’à 25 stagiaires par fichier, ainsi que la préparation d’emails de relance pour 3 entreprises. L’abonnement Pro lève ces limites. Il est activé par une clé de licence personnelle, envoyée par email après le paiement, que le Client s’engage à ne pas diffuser hors de son organisme.</p>
+<p>L’application est accessible sans compte. La version gratuite permet les contrôles et l’export de sessions complètes jusqu’à 25 stagiaires par fichier, ainsi que la préparation d’emails de relance pour 3 entreprises. L’abonnement Pro lève ces limites. Il est activé par une clé de licence personnelle, envoyée par email après le paiement, que le Client s’engage à ne pas diffuser hors de son organisme. La clé d’un abonnement annuel couvre 13 mois ; celle d’un abonnement mensuel, offre pilote comprise, couvre 4 mois et une nouvelle clé est envoyée chaque trimestre tant que l’abonnement est actif.</p>
 <h2>4. Prix et paiement</h2>
 <p>Pro : 29 € HT par mois sans engagement, ou 290 € HT par an. ${todo('Mention TVA selon le régime de l’éditeur')}. Le paiement est effectué par carte via Stripe ; une facture est émise pour chaque échéance. Les prix peuvent évoluer ; tout changement est annoncé au moins 30 jours avant la prochaine échéance.</p>
 <h2>5. Durée et résiliation</h2>
@@ -106,11 +106,14 @@ page('confidentialite.html', 'Confidentialité', 'Politique de confidentialité 
 <tr><th>Données</th><th>Finalité et base légale</th><th>Durée</th></tr>
 <tr><td>Échanges par email (nom, email, contenu)</td><td>Répondre à vos demandes, support (intérêt légitime ; exécution du contrat pour les clients)</td><td>3 ans après le dernier échange</td></tr>
 <tr><td>Données de paiement et de facturation (via Stripe)</td><td>Encaissement, facturation, émission de la clé de licence (exécution du contrat ; obligations comptables)</td><td>Factures : 10 ans (Code de commerce)</td></tr>
+<tr><td>Prospection (nom de l’organisme, email et téléphone professionnels, nom du dirigeant, tels qu’affichés sur le site de l’organisme ; historique des échanges)</td><td>Présenter Échéa aux organismes de formation (intérêt légitime : prospection entre professionnels, en rapport avec l’activité du destinataire)</td><td>3 ans à compter de la collecte ou du dernier contact émanant de l’organisme ; suppression sur simple demande</td></tr>
 <tr><td>Journaux techniques de l’hébergeur (adresse IP, pages demandées)</td><td>Sécurité et fonctionnement du site (intérêt légitime), traités par GitHub</td><td>Selon la politique de GitHub</td></tr>
 </table>
 <p>L’éditeur ne voit jamais les numéros de carte, traités directement par Stripe.</p>
+<h2 id="prospection">Prospection</h2>
+<p>Les coordonnées utilisées pour présenter Échéa sont celles que les organismes de formation publient sur leur site internet. Aucun message n’est envoyé en masse : chaque email est relu puis envoyé par l’éditeur. Pour ne plus être contacté, il suffit de répondre à un message ou d’écrire à <a href="" data-contact="text">l’adresse de contact</a> : les coordonnées sont supprimées, seule une mention « ne plus contacter » étant conservée pour respecter ce choix.</p>
 <h2>Destinataires et transferts</h2>
-<p>Stripe (paiement) et GitHub, Inc. (hébergement du site) interviennent comme prestataires. Ces sociétés peuvent traiter des données hors de l’Union européenne, notamment aux États-Unis, dans le cadre des garanties prévues par le RGPD (clauses contractuelles types ou cadre de protection des données UE–États-Unis selon leurs engagements). ${todo('Vérifier l’entité Stripe indiquée dans votre contrat')}</p>
+<p>Stripe (paiement), GitHub, Inc. (hébergement du site), Google (messagerie) et Anthropic (assistant Claude, utilisé pour préparer les messages et tenir le suivi des prospects) interviennent comme prestataires. Ces sociétés peuvent traiter des données hors de l’Union européenne, notamment aux États-Unis, dans le cadre des garanties prévues par le RGPD (clauses contractuelles types ou cadre de protection des données UE–États-Unis selon leurs engagements). ${todo('Vérifier l’entité Stripe indiquée dans votre contrat')}</p>
 <h2>Mesure d’audience</h2>
 <p>Si elle est activée, la mesure d’audience utilise un outil sans cookie qui ne collecte que des pages vues et des évènements anonymes (par exemple « export effectué »), jamais le contenu de vos fichiers.</p>
 <h2>Vos droits</h2>

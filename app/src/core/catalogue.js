@@ -2,6 +2,7 @@
 // Les codes (ROME, Formacode, NSF, RS) sont à recopier depuis les fiches pratiques officielles :
 // https://passeport-prevention.travail-emploi.gouv.fr/espace-public/node/106
 // validityMonths = validité officielle connue (remplit DATE_FIN_VALIDITE) ; recycleMonths = rythme commercial de relance.
+// jdrName vide = le justificatif prend l'intitulé réel de la session (catégorie CACES, niveau SSIAP…).
 import { normKey } from './text.js';
 import { checkCompetences, checkFormacodes, checkNsf, checkRs } from './codes.js';
 
@@ -37,13 +38,13 @@ export const DEFAULT_CATALOGUE = [
     source: "Titre délivré par l'employeur ; recyclage conseillé tous les 3 ans (INRS), pas de durée légale.",
   },
   {
-    ...base, id: 'caces', label: 'CACES® (R489, R486, R485, R490…)', jdrName: 'CACES',
+    ...base, id: 'caces', label: 'CACES® (R489, R486, R485, R490…)', jdrName: '',
     match: ['caces', 'r489', 'r486', 'r485', 'r490', 'r484', 'r483', 'r487', 'r423', 'chariot', 'nacelle', 'pemp'], exclude: ['r482'],
     declareAs: 'JDR', jdrType: 'CERTIFICAT', validityMonths: 60, recycleMonths: 60, recycleLabel: 'Recyclage CACES',
     source: "CACES valable 5 ans (INRS) ; recommandation, pas une obligation légale.",
   },
   {
-    ...base, id: 'caces-r482', label: 'CACES® R482 (engins de chantier)', jdrName: 'CACES R482',
+    ...base, id: 'caces-r482', label: 'CACES® R482 (engins de chantier)', jdrName: '',
     match: ['r482', 'engins de chantier'], exclude: [], declareAs: 'JDR', jdrType: 'CERTIFICAT', validityMonths: 120, recycleMonths: 120,
     recycleLabel: 'Recyclage CACES R482', source: 'CACES R482 valable 10 ans (INRS).',
   },
@@ -66,12 +67,12 @@ export const DEFAULT_CATALOGUE = [
     source: 'Renouvelée « aussi souvent que nécessaire » (R4323-106). Rythme de relance à ajuster.',
   },
   {
-    ...base, id: 'aipr', label: 'AIPR (opérateur, encadrant, concepteur)', jdrName: 'AIPR',
+    ...base, id: 'aipr', label: 'AIPR (opérateur, encadrant, concepteur)', jdrName: '',
     match: ['aipr'], exclude: [], declareAs: 'ADF', jdrType: 'CERTIFICAT', validityMonths: 60, recycleMonths: 60, recycleLabel: 'Renouvellement AIPR',
     source: 'Attestation de compétences valable 5 ans (OPPBTP).',
   },
   {
-    ...base, id: 'ssiap', label: 'SSIAP 1, 2 ou 3', jdrName: 'SSIAP',
+    ...base, id: 'ssiap', label: 'SSIAP 1, 2 ou 3', jdrName: '',
     match: ['ssiap'], exclude: [], declareAs: 'JDR', jdrType: 'DIPLOME', validityMonths: 0, recycleMonths: 36, recycleLabel: 'Recyclage SSIAP',
     source: 'Recyclage tous les 3 ans (arrêté du 2 mai 2005, art. 7).',
   },

@@ -89,14 +89,14 @@ function render() {
 }
 
 // ---------------------------------------------------------------- import
-async function handleFile(file) {
+async function handleFile(file, opts = {}) {
   mount(main, h('div', { class: 'panel row' }, h('div', { class: 'spinner', 'aria-hidden': 'true' }), h('span', {}, `Lecture de « ${file.name} »…`)));
   try {
     const sheets = await readWorkbook(file);
     let best = 0;
     let bestScore = -1;
     sheets.forEach((s, i) => { const sc = findHeaderRow(s.rows).recognized; if (sc > bestScore) { bestScore = sc; best = i; } });
-    state.work = { fileName: file.name, sheets, sheetIndex: best, overrides: {}, step: 'mapping' };
+    state.work = { fileName: file.name, sheets, sheetIndex: best, overrides: {}, step: 'mapping', isSample: !!opts.sample };
     prepareSheet();
     track('import');
   } catch (e) {
@@ -158,7 +158,7 @@ async function loadDemoFile() {
     const res = await fetch('./exemple-stagiaires.xlsx');
     if (!res.ok) throw new Error('indisponible');
     const blob = await res.blob();
-    await handleFile(new File([blob], 'exemple-stagiaires.xlsx', { type: blob.type }));
+    await handleFile(new File([blob], 'exemple-stagiaires.xlsx', { type: blob.type }), { sample: true });
   } catch {
     toast("Le fichier d'exemple n'a pas pu être chargé.", 'error');
   }
@@ -408,7 +408,7 @@ function viewCheck() {
     h('div', { class: 'table-wrap' }, h('table', { class: 'data stack-sm' },
       h('thead', {}, h('tr', {}, h('th', {}, 'Formation'), h('th', {}, 'Type'), h('th', {}, 'Dates'), h('th', {}, 'Stagiaires'), h('th', {}, 'À déclarer avant'))),
       h('tbody', {}, w.declarations.map((d) => h('tr', {},
-        h('td', { 'data-label': 'Formation' }, h('b', {}, d.template.label)), h('td', { 'data-label': 'Type' }, h('span', { class: `chip ${d.kind === 'JDR' ? 'chip-brand' : 'chip-muted'}`, title: d.kind === 'JDR' ? 'Justificatif de réussite' : 'Attestation de formation' }, d.kind)),
+        h('td', { 'data-label': 'Formation' }, h('b', {}, d.name || d.template.label), d.name && d.name !== d.template.label ? h('div', { class: 'muted small' }, d.template.label) : null), h('td', { 'data-label': 'Type' }, h('span', { class: `chip ${d.kind === 'JDR' ? 'chip-brand' : 'chip-muted'}`, title: d.kind === 'JDR' ? 'Justificatif de réussite' : 'Attestation de formation' }, d.kind)),
         h('td', { 'data-label': 'Dates' }, d.dateDebut === d.dateFin ? toFr(d.dateFin) : `${toFr(d.dateDebut)} → ${toFr(d.dateFin)}`),
         h('td', { class: 'num', 'data-label': 'Stagiaires' }, d.trainees.length), h('td', { 'data-label': 'À déclarer avant' }, deadlineChip(d.deadline))))))),
     h('p', { class: 'small muted' }, 'Délais officiels : formations 2026, 6 mois après la fin du trimestre ; à partir de 2027, 3 mois. ', h('a', { href: SOURCES.obligations, target: '_blank', rel: 'noopener' }, 'Source'))) : null;
@@ -488,6 +488,8 @@ function freeSelection(declarations) {
 
 function viewExport() {
   const w = state.work;
+  // En démo, les codes des formations sont des exemples : seul le fichier fictif peut être exporté.
+  const demoLocked = DEMO && !w.isSample;
   const includeBefore = h('input', { type: 'checkbox', id: 'include-before', checked: state.options.includeBeforeObligation });
   includeBefore.addEventListener('change', () => { state.options.includeBeforeObligation = includeBefore.checked; persist(); runAnalysis(); render(); });
 
@@ -500,18 +502,18 @@ function viewExport() {
     const doDownload = (list, suffix = '') => {
       const recs = toRecords(list)[kind];
       const csv = buildCsv(columns, recs);
-      download(exportFileName(kind + suffix, state.org.name, TODAY, recs.length), csv);
+      download(exportFileName(`${DEMO ? 'DEMO_' : ''}${kind}${suffix}`, state.org.name, TODAY, recs.length), csv);
       track(`export-${kind.toLowerCase()}${suffix ? '-test' : ''}`);
       toast(`Fichier ${kind} téléchargé : ${plural(recs.length, 'stagiaire', 'stagiaires')}.`);
     };
     const preview = buildCsv(columns, toRecords(decls.slice(0, 1))[kind].slice(0, 2)).split('\r\n').filter(Boolean).join('\n');
-    const allowed = isPro() || total <= FREE_EXPORT_LIMIT;
+    const allowed = !demoLocked && (isPro() || total <= FREE_EXPORT_LIMIT);
     const free = freeSelection(decls);
     return h('div', { class: 'panel stack', dataset: { kind } },
       h('div', { class: 'spread' },
         h('div', {}, h('h3', { style: 'margin:0' }, title), h('span', { class: 'muted small' }, `${plural(total, 'stagiaire', 'stagiaires')} · ${plural(decls.length, 'déclaration', 'déclarations')} · ${columns.length} colonnes`)),
         h('button', { class: 'btn btn-primary', type: 'button', id: `dl-${kind.toLowerCase()}`, disabled: !allowed, onclick: () => doDownload(decls) }, `Télécharger le fichier ${kind}`)),
-      !allowed ? h('div', { class: 'upsell stack' },
+      !allowed && !demoLocked ? h('div', { class: 'upsell stack' },
         h('div', {}, h('h3', {}, `${total} stagiaires : passez en Pro pour tout exporter`),
           h('p', { class: 'small', style: 'margin:0' }, `La version gratuite exporte des sessions complètes jusqu’à ${FREE_EXPORT_LIMIT} stagiaires, pour tester un premier dépôt.`)),
         h('div', { class: 'row' },
@@ -529,6 +531,11 @@ function viewExport() {
       h('h2', {}, 'Vos fichiers pour le Passeport de prévention'),
       h('p', { class: 'muted', style: 'margin:0' }, 'CSV UTF-8, séparateur « | », colonnes dans l’ordre des guides officiels. Les lignes en erreur sont exclues.'),
       before ? h('label', { class: 'check', for: 'include-before' }, includeBefore, `Inclure ${plural(before, 'stagiaire formé', 'stagiaires formés')} avant le 01/09/2025 (non obligatoire)`) : null),
+    demoLocked ? h('div', { class: 'notice notice-warn stack', id: 'demo-locked', role: 'alert' },
+      h('b', {}, 'Mode démo : export désactivé pour votre fichier'),
+      h('span', {}, 'Les codes des formations de la démo sont des exemples. Pour déclarer vos stagiaires, ouvrez l’application normale et complétez les codes de vos formations : votre fichier y sera contrôlé de la même façon.'),
+      h('a', { class: 'btn btn-primary btn-small', href: './app.html', style: 'align-self:flex-start' }, 'Ouvrir l’application')) : null,
+    DEMO && w.isSample ? h('p', { class: 'notice small' }, 'Fichiers de démonstration : stagiaires fictifs et codes d’exemple, à ne pas déposer sur le portail.') : null,
     ...blocks,
     h('div', { class: 'panel' },
       h('h3', {}, 'Déposer le fichier'),
@@ -720,11 +727,11 @@ function templateEditor(t) {
 
   const body = h('div', { class: 'tpl-body' },
     h('div', { class: 'fields two' },
-      txt('label', 'Intitulé déclaré (NOM_FORMATION)', '250 caractères maximum'),
+      txt('label', 'Intitulé de la formation', 'Déclaré (NOM_FORMATION) quand votre fichier n’indique qu’une abréviation comme « SST » ; sinon, l’intitulé de votre fichier est repris.'),
       sel('declareAs', 'Stagiaires reçus déclarés en', [['JDR', 'Justificatif de réussite (JDR)'], ['ADF', 'Attestation de formation (ADF)']], 'Les non-reçus sont toujours déclarés en attestation.')),
     h('div', { class: 'fields two' },
       sel('jdrType', 'Type de justificatif (TYPE_JDR)', JDR_TYPES),
-      txt('jdrName', 'Intitulé du justificatif (NOM_JDR)', 'ex. Sauveteur secouriste du travail')),
+      txt('jdrName', 'Intitulé du justificatif (NOM_JDR)', 'Vide : l’intitulé de la session est repris (ex. « CACES R489 cat. 3 »).')),
     txt('competences', 'Compétences transférables ROME (3 à 10)', 'ex. 115650/121885/400635 — séparées par /', { inputmode: 'numeric' }),
     h('label', { class: 'check', for: `cert-${t.id}` }, certif, 'Formation certifiante (code RS au lieu des Formacodes et NSF)'),
     certBlock, nonCertBlock,

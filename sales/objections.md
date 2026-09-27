@@ -3,7 +3,7 @@
 Règle : ne jamais affirmer plus que ce que disent les sources (voir `docs/research/reglementation-passeport-of.md`, section « À ne pas dire »).
 
 **« Je peux saisir sur le portail directement. »**
-Oui, jusqu'à 50 personnes par saisie. Au-delà, ou session après session, l'import de fichier fait gagner le temps de la ressaisie, et Échéa vérifie avant le dépôt ce que le portail rejetterait.
+Oui, jusqu'à 50 personnes par saisie. Au-delà, ou session après session, l'import de fichier fait gagner le temps de la ressaisie, et Échéa vérifie avant le dépôt le format que le portail contrôle.
 
 **« Il existe un générateur CSV gratuit. »**
 Oui, et il est très bien pour quelques stagiaires : il se remplit stagiaire par stagiaire. Échéa part de votre fichier existant, contrôle toutes les lignes d'un coup, découpe par session et à 500 stagiaires, et ajoute le suivi des recyclages.
