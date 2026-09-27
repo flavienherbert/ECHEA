@@ -17,6 +17,6 @@ cp -r "$ROOT/app/dist/." .
 touch .nojekyll
 git add -A
 if git diff --cached --quiet; then echo "Rien à publier."; exit 0; fi
-git commit -q -m "Déploiement du site Échéa ($(date +%Y-%m-%d\ %H:%M))"
+git commit -q -m "Déploiement du site Échéa ($(date +%Y-%m-%d\ %H:%M))" -m "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>"
 git push -q origin gh-pages
 echo "Publié : https://flavienherbert.github.io/ECHEA/"

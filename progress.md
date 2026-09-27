@@ -44,11 +44,11 @@ Leçon : les agents en parallèle consomment vite la limite d'usage. Pousser sur
 |---|---|
 | Recherche (réglementation, concurrence, format) | DONE — `docs/research/` |
 | Prospects | DONE (37 dont 25 revérifiés) — données personnelles hors Git, dans `sales/private/` (ignoré) |
-| App | TODO |
-| Landing + pages légales | TODO |
-| Tests | TODO |
-| Déploiement GitHub Pages | TODO |
-| Stripe (mode test) | TODO |
+| App | DONE — `app/app.html` + `app/src/` (import, colonnes, contrôle, export ADF/JDR, recyclages, formations, réglages, licence, démo) |
+| Landing + pages légales | DONE — `app/index.html`, mentions, CGV, confidentialité, merci (marqueurs [À COMPLÉTER] : statut, SIRET, adresse, TVA) |
+| Tests | DONE — 28 tests unitaires + 20 parcours E2E (10 scénarios × desktop/mobile), tous verts |
+| Déploiement GitHub Pages | DONE — https://flavienherbert.github.io/ECHEA/ (branche `gh-pages`, `bash scripts/deploy.sh`) — vérifié par WebFetch le 27/09 |
+| Stripe (mode test) | DONE (config) — produit `prod_VKsjqjuICeWP4t`, prix 29 €/mois `price_1UKCyEEGJoc9TCKl7COpqJ08` et 290 €/an `price_1UKCyIEGJoc9TCKlW3al34zl`, liens mensuel / annuel / pilote (3 mois offerts, 10 places) ; paiement réel NON testé (stripe.com inaccessible depuis le shell) |
 | Messages + brouillons Gmail | TODO |
 | Agents / orchestrateur / automatisations | TODO |
 | Stratégie, README, supports | TODO |
@@ -77,7 +77,9 @@ Leçon : les agents en parallèle consomment vite la limite d'usage. Pousser sur
 
 ## Tests effectués
 
-(aucun pour l'instant)
+- `npm test` : 28 tests unitaires (NIR + clé + Corse, SIRET Luhn, dates Excel, délais officiels, codes, colonnes, formations, ADF/JDR, découpage 500, identifiants stables, recyclages, licences, fichier d'exemple réel).
+- `npm run test:e2e` : 20/20 (desktop + mobile) — arrivée, compréhension, CTA, réglages conservés, éditeur de codes, import → corrections → export conforme (20 et 29 colonnes), liens Stripe + activation de licence, « Tout effacer », démo, erreurs de fichier, pages légales.
+- Site public vérifié par WebFetch (index, app, mentions légales, asset JS).
 
 ## Problèmes rencontrés
 
