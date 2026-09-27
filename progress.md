@@ -43,15 +43,16 @@ Leçon : les agents en parallèle consomment vite la limite d'usage. Pousser sur
 | Élément | Statut |
 |---|---|
 | Recherche (réglementation, concurrence, format) | DONE — `docs/research/` |
-| Prospects | DONE (37 dont 25 revérifiés) — données personnelles hors Git, dans `sales/private/` (ignoré) |
+| Prospects | DONE — 37 organismes (28 A, 4 B, 5 C), 29 emails vérifiés ; données personnelles hors Git (`sales/private/`) |
 | App | DONE — `app/app.html` + `app/src/` (import, colonnes, contrôle, export ADF/JDR, recyclages, formations, réglages, licence, démo) |
 | Landing + pages légales | DONE — `app/index.html`, mentions, CGV, confidentialité, merci (marqueurs [À COMPLÉTER] : statut, SIRET, adresse, TVA) |
 | Tests | DONE — 28 tests unitaires + 20 parcours E2E (10 scénarios × desktop/mobile), tous verts |
 | Déploiement GitHub Pages | DONE — https://flavienherbert.github.io/ECHEA/ (branche `gh-pages`, `bash scripts/deploy.sh`) — vérifié par WebFetch le 27/09 |
 | Stripe (mode test) | DONE (config) — produit `prod_VKsjqjuICeWP4t`, prix 29 €/mois `price_1UKCyEEGJoc9TCKl7COpqJ08` et 290 €/an `price_1UKCyIEGJoc9TCKlW3al34zl`, liens mensuel / annuel / pilote (3 mois offerts, 10 places) ; paiement réel NON testé (stripe.com inaccessible depuis le shell) |
-| Messages + brouillons Gmail | TODO |
-| Agents / orchestrateur / automatisations | TODO |
-| Stratégie, README, supports | TODO |
+| Messages + brouillons Gmail | DONE — 25 brouillons personnalisés dans Gmail ([adresse Gmail de l'éditeur]), **non envoyés** ; journal `sales/private/drafts-log.json` |
+| CRM | DONE — artefact privé « Pipeline Échéa » [URL du CRM privé, voir sales/private/] (collection `prospects`, 37 fiches, lecture/écriture réservées au propriétaire) ; code de la page : `sales/crm-pipeline.html` |
+| Agents / orchestrateur / automatisations | DONE — 8 fiches (`agents/`), 5 procédures (`workflows/`), tâche planifiée « Échéa — pipeline du lundi » (`[id de la tâche planifiée]`, lundi 8 h 47, prompt `prompts/pipeline-hebdo.md`) |
+| Stratégie, README, supports | DONE — `docs/business-strategy.md`, `README.md`, `sales/*.md`, `marketing/pitch.md`, `marketing/echea-presentation.pdf` |
 
 ## Décisions importantes
 

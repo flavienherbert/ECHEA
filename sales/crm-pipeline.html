@@ -1,0 +1,236 @@
+<title>Pipeline Échéa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+  :root {
+    --bg: #f3f6f5; --surface: #ffffff; --sunk: #e8eeec; --ink: #13212b; --ink-2: #34454f; --muted: #5f6e78;
+    --line: #dce4e1; --brand: #0f5b53; --brand-soft: #e1efeb; --on-brand: #ffffff; --amber: #b86e0b; --amber-soft: #fcefd8;
+    --red: #b3261e; --red-soft: #fbe7e5; --green: #1d6f42; --green-soft: #e3f2e8; --focus: #1b7cd6;
+    --font: "IBM Plex Sans", -apple-system, "Segoe UI", Roboto, Arial, sans-serif; --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0e1618; --surface: #162226; --sunk: #0b1214; --ink: #e6eeeb; --ink-2: #c7d3ce; --muted: #98a8a2; --line: #26363a;
+      --brand: #5fbfb0; --brand-soft: #173430; --on-brand: #04201c; --amber: #f0b456; --amber-soft: #33280f; --red: #ff8f86;
+      --red-soft: #3a1917; --green: #7ad3a0; --green-soft: #14301f; --focus: #6cb6ff; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0e1618; --surface: #162226; --sunk: #0b1214; --ink: #e6eeeb; --ink-2: #c7d3ce; --muted: #98a8a2; --line: #26363a;
+    --brand: #5fbfb0; --brand-soft: #173430; --on-brand: #04201c; --amber: #f0b456; --amber-soft: #33280f; --red: #ff8f86;
+    --red-soft: #3a1917; --green: #7ad3a0; --green-soft: #14301f; --focus: #6cb6ff; color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  body { background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 15px; line-height: 1.5; padding: 20px 16px 48px; }
+  .wrap { max-width: 1180px; margin: 0 auto; display: grid; gap: 16px; }
+  h1 { font-size: 24px; margin: 0; letter-spacing: -0.01em; text-wrap: balance; }
+  h2 { font-size: 16px; margin: 0 0 8px; }
+  .top { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: baseline; justify-content: space-between; }
+  .sub { color: var(--muted); font-size: 14px; }
+  .deadline { background: var(--amber-soft); color: var(--ink); border-radius: 8px; padding: 8px 12px; font-size: 14px; }
+  .deadline b { color: var(--amber); }
+  .funnel { display: grid; grid-template-columns: repeat(auto-fit, minmax(118px, 1fr)); gap: 8px; }
+  .stage { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; text-align: left; font: inherit; color: inherit; cursor: pointer; }
+  .stage b { display: block; font-family: var(--mono); font-size: 22px; font-variant-numeric: tabular-nums; }
+  .stage span { font-size: 13px; color: var(--muted); }
+  .stage[aria-pressed="true"] { border-color: var(--brand); box-shadow: inset 0 0 0 1px var(--brand); }
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  input[type="search"], select, textarea, input[type="date"] { font: inherit; font-size: 14px; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; min-height: 38px; }
+  input[type="search"] { flex: 1 1 220px; min-width: 0; }
+  textarea { width: 100%; min-height: 90px; resize: vertical; }
+  :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  .layout { display: grid; gap: 16px; align-items: start; }
+  @media (min-width: 980px) { .layout { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); } .detail { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 12px); } }
+  .list { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+  .row { display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; gap: 10px; align-items: center; width: 100%; padding: 11px 14px; border: 0; border-bottom: 1px solid var(--line); background: none; text-align: left; font: inherit; color: inherit; cursor: pointer; }
+  .row:last-child { border-bottom: 0; }
+  .row:hover { background: var(--sunk); }
+  .row[aria-current="true"] { background: var(--brand-soft); }
+  .prio { font-family: var(--mono); font-size: 13px; width: 28px; height: 28px; border-radius: 7px; display: grid; place-items: center; background: var(--sunk); color: var(--ink-2); }
+  .prio.A { background: var(--brand); color: var(--on-brand); }
+  .prio.B { background: var(--brand-soft); color: var(--brand); }
+  .name { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .meta { font-size: 13px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .pill { font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 999px; white-space: nowrap; background: var(--sunk); color: var(--ink-2); }
+  .pill.draft { background: var(--amber-soft); color: var(--amber); }
+  .pill.sent, .pill.follow { background: var(--brand-soft); color: var(--brand); }
+  .pill.hot { background: var(--green-soft); color: var(--green); }
+  .pill.lost { background: var(--red-soft); color: var(--red); }
+  .detail { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px; display: grid; gap: 12px; }
+  .detail dl { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 6px 10px; margin: 0; font-size: 14px; }
+  .detail dt { color: var(--muted); }
+  .detail dd { margin: 0; overflow-wrap: anywhere; }
+  .hook { background: var(--sunk); border-radius: 8px; padding: 10px 12px; font-size: 14px; color: var(--ink-2); }
+  .fields { display: grid; gap: 10px; grid-template-columns: 1fr 1fr; }
+  .fields label, .full label { display: grid; gap: 4px; font-size: 13px; color: var(--muted); font-weight: 600; }
+  .full { display: grid; gap: 4px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  button.btn { font: inherit; font-weight: 600; font-size: 14px; border-radius: 8px; padding: 8px 14px; min-height: 38px; cursor: pointer; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+  button.btn.primary { background: var(--brand); border-color: var(--brand); color: var(--on-brand); }
+  button.btn[disabled] { opacity: .55; cursor: not-allowed; }
+  .copy { font-family: var(--mono); font-size: 13px; user-select: all; }
+  .empty { padding: 28px 16px; text-align: center; color: var(--muted); }
+  .status-line { font-size: 13px; color: var(--muted); min-height: 1.4em; }
+  a { color: var(--brand); }
+  @media (max-width: 560px) { .fields { grid-template-columns: 1fr; } .detail dl { grid-template-columns: 1fr; } .detail dt { margin-top: 4px; } }
+</style>
+
+<div class="wrap">
+  <div class="top">
+    <div>
+      <h1>Pipeline Échéa</h1>
+      <div class="sub">Organismes de formation prospectés · emails envoyés depuis Gmail, jamais depuis cette page</div>
+    </div>
+    <div class="deadline">Prochaine échéance Passeport à rappeler : <b>31/12/2026</b> (formations d'avril à juin 2026)</div>
+  </div>
+
+  <div class="funnel" id="funnel" aria-label="Étapes du pipeline"></div>
+
+  <div class="filters">
+    <input type="search" id="q" placeholder="Rechercher un organisme, une ville, un département…" aria-label="Rechercher">
+    <select id="prio" aria-label="Priorité">
+      <option value="">Toutes priorités</option><option value="A">Priorité A</option><option value="B">Priorité B</option><option value="C">Priorité C</option>
+    </select>
+    <select id="dept" aria-label="Département"><option value="">Tous départements</option></select>
+  </div>
+
+  <div class="layout">
+    <div class="list" id="list" role="list"><div class="empty">Chargement du pipeline…</div></div>
+    <aside class="detail" id="detail" aria-live="polite"><div class="empty">Choisissez un organisme pour voir sa fiche et mettre à jour son statut.</div></aside>
+  </div>
+  <div class="status-line" id="status"></div>
+</div>
+
+<script>
+(() => {
+  const STAGES = [
+    ['brouillon Gmail créé (non envoyé)', 'Brouillon prêt', 'draft'],
+    ['envoyé', 'Envoyé', 'sent'],
+    ['relancé', 'Relancé', 'follow'],
+    ['répondu', 'Répondu', 'hot'],
+    ['démo', 'Démo', 'hot'],
+    ['pilote', 'Pilote', 'hot'],
+    ['client', 'Client', 'hot'],
+    ['à contacter (formulaire/téléphone)', 'Formulaire / tél.', ''],
+    ['en réserve', 'En réserve', ''],
+    ['perdu', 'Perdu', 'lost'],
+    ['ne plus contacter', 'Ne plus contacter', 'lost'],
+  ];
+  const LABEL = Object.fromEntries(STAGES.map(([v, l]) => [v, l]));
+  const CLS = Object.fromEntries(STAGES.map(([v, , c]) => [v, c]));
+  const $ = (id) => document.getElementById(id);
+  let rows = [];
+  let selected = null;
+  let stageFilter = '';
+  let db = null;
+  let saving = false;
+
+  const el = (tag, attrs = {}, ...kids) => {
+    const n = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs)) {
+      if (v == null || v === false) continue;
+      if (k === 'class') n.className = v;
+      else if (k.startsWith('on')) n.addEventListener(k.slice(2), v);
+      else n.setAttribute(k, v === true ? '' : v);
+    }
+    for (const k of kids.flat()) if (k != null && k !== false) n.append(k instanceof Node ? k : document.createTextNode(String(k)));
+    return n;
+  };
+  const norm = (s) => String(s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+  const frDate = (iso) => (iso ? iso.slice(0, 10).split('-').reverse().join('/') : '');
+  const daysSince = (iso) => (iso ? Math.floor((Date.now() - Date.parse(iso)) / 86400000) : null);
+
+  function renderFunnel() {
+    const counts = {};
+    rows.forEach((r) => { counts[r.status] = (counts[r.status] || 0) + 1; });
+    const f = $('funnel');
+    f.replaceChildren(
+      el('button', { class: 'stage', type: 'button', 'aria-pressed': stageFilter === '' ? 'true' : 'false', onclick: () => { stageFilter = ''; render(); } }, el('b', {}, rows.length), el('span', {}, 'Tous')),
+      ...STAGES.filter(([v]) => counts[v]).map(([v, l]) => el('button', { class: 'stage', type: 'button', 'aria-pressed': stageFilter === v ? 'true' : 'false', onclick: () => { stageFilter = stageFilter === v ? '' : v; render(); } }, el('b', {}, counts[v]), el('span', {}, l))),
+    );
+  }
+
+  function filtered() {
+    const q = norm($('q').value);
+    const prio = $('prio').value;
+    const dept = $('dept').value;
+    return rows.filter((r) => (!stageFilter || r.status === stageFilter) && (!prio || r.priorite === prio) && (!dept || r.department === dept)
+      && (!q || norm([r.company, r.city, r.department, r.region, r.trainings, r.contact_name].join(' ')).includes(q)));
+  }
+
+  function renderList() {
+    const list = $('list');
+    const items = filtered();
+    if (!rows.length) { list.replaceChildren(el('div', { class: 'empty' }, db ? 'Aucun prospect enregistré pour l’instant.' : 'Le suivi n’est pas disponible dans cette vue.')); return; }
+    if (!items.length) { list.replaceChildren(el('div', { class: 'empty' }, 'Aucun organisme ne correspond à ces filtres.')); return; }
+    list.replaceChildren(...items.map((r) => {
+      const since = daysSince(r.last_contact);
+      const relance = (r.status === 'envoyé' && since !== null && since >= 4) ? ` · relance J+${since}` : '';
+      return el('button', { class: 'row', type: 'button', role: 'listitem', 'aria-current': selected === r.id ? 'true' : 'false', onclick: () => { selected = r.id; render(); } },
+        el('span', { class: `prio ${r.priorite}` }, r.priorite),
+        el('span', {}, el('div', { class: 'name' }, r.company), el('div', { class: 'meta' }, `${r.city} (${r.department}) · ${r.channel === 'email' ? r.email : r.channel}${relance}`)),
+        el('span', { class: `pill ${CLS[r.status] || ''}` }, LABEL[r.status] || r.status));
+    }));
+  }
+
+  function renderDetail() {
+    const box = $('detail');
+    const r = rows.find((x) => x.id === selected);
+    if (!r) { box.replaceChildren(el('div', { class: 'empty' }, 'Choisissez un organisme pour voir sa fiche et mettre à jour son statut.')); return; }
+    const status = el('select', { id: 'f-status', 'aria-label': 'Statut' }, ...STAGES.map(([v, l]) => { const o = el('option', { value: v }, l); if (v === r.status) o.selected = true; return o; }));
+    const last = el('input', { type: 'date', id: 'f-last', value: (r.last_contact || '').slice(0, 10), 'aria-label': 'Dernier contact' });
+    const next = el('textarea', { id: 'f-next', rows: 2, 'aria-label': 'Prochaine action' }); next.value = r.next_action || '';
+    const notes = el('textarea', { id: 'f-notes', 'aria-label': 'Notes' }); notes.value = r.notes || '';
+    const save = el('button', { class: 'btn primary', type: 'button', disabled: !db || saving, onclick: async () => {
+      if (!db || saving) return;
+      saving = true; save.disabled = true; $('status').textContent = 'Enregistrement…';
+      const patch = { status: status.value, last_contact: last.value || '', next_action: next.value.trim(), notes: notes.value.trim(), updated_at: new Date().toISOString() };
+      try { await db.doc(`prospects/${r.id}`).update(patch); $('status').textContent = `Fiche « ${r.company} » enregistrée.`; }
+      catch (e) { $('status').textContent = e && e.code === 'invalid_argument' ? 'Vous n’avez pas le droit de modifier ce suivi.' : 'Enregistrement impossible pour le moment. Réessayez dans un instant.'; }
+      finally { saving = false; save.disabled = false; }
+    } }, 'Enregistrer');
+    const copy = r.email ? el('button', { class: 'btn', type: 'button', onclick: async () => {
+      try { await navigator.clipboard.writeText(r.email); $('status').textContent = 'Email copié.'; }
+      catch { $('status').textContent = 'Copie refusée : sélectionnez l’adresse à la main.'; }
+    } }, 'Copier l’email') : null;
+    box.replaceChildren(
+      el('div', {}, el('h2', {}, r.company), el('div', { class: 'sub' }, `${r.city} (${r.department}) · ${r.region} · priorité ${r.priorite}`)),
+      r.hook ? el('div', { class: 'hook' }, r.hook) : null,
+      el('dl', {},
+        el('dt', {}, 'Email'), el('dd', {}, r.email ? el('span', { class: 'copy' }, r.email) : '—'),
+        el('dt', {}, 'Téléphone'), el('dd', {}, r.phone || '—'),
+        el('dt', {}, 'Contact'), el('dd', {}, r.contact_name ? `${r.contact_name}${r.contact_role ? ` (${r.contact_role})` : ''}` : '—'),
+        el('dt', {}, 'Formations'), el('dd', {}, r.trainings || '—'),
+        el('dt', {}, 'Outil vu'), el('dd', {}, r.software_seen || '—'),
+        el('dt', {}, 'Pourquoi'), el('dd', {}, r.priority_reason || r.reason_fit || '—'),
+        el('dt', {}, 'Sites'), el('dd', {}, r.website ? el('a', { href: r.website, target: '_blank', rel: 'noopener' }, 'Site') : '—', r.contact_page_url && r.contact_page_url.startsWith('http') ? [' · ', el('a', { href: r.contact_page_url, target: '_blank', rel: 'noopener' }, 'Contact')] : null)),
+      el('div', { class: 'fields' }, el('label', { for: 'f-status' }, 'Statut', status), el('label', { for: 'f-last' }, 'Dernier contact', last)),
+      el('div', { class: 'full' }, el('label', { for: 'f-next' }, 'Prochaine action'), next),
+      el('div', { class: 'full' }, el('label', { for: 'f-notes' }, 'Notes'), notes),
+      el('div', { class: 'actions' }, save, copy, r.updated_at ? el('span', { class: 'sub' }, `Mis à jour le ${frDate(r.updated_at)}`) : null),
+    );
+  }
+
+  function renderDepts() {
+    const sel = $('dept');
+    const cur = sel.value;
+    const depts = [...new Set(rows.map((r) => r.department).filter(Boolean))].sort();
+    sel.replaceChildren(el('option', { value: '' }, 'Tous départements'), ...depts.map((d) => { const o = el('option', { value: d }, `Département ${d}`); if (d === cur) o.selected = true; return o; }));
+  }
+
+  function render() { renderFunnel(); renderList(); renderDetail(); }
+  ['q', 'prio', 'dept'].forEach((id) => $(id).addEventListener('input', renderList));
+
+  (async () => {
+    db = await (window.claude && window.claude.use ? window.claude.use('db') : Promise.resolve(null));
+    if (!db) { $('list').replaceChildren(el('div', { class: 'empty' }, 'Le suivi partagé n’est pas disponible dans cette vue.')); return; }
+    db.collection('prospects').onSnapshot((snap) => {
+      rows = snap.docs.filter((d) => d.exists).map((d) => ({ id: d.id, ...d.data() }))
+        .sort((a, b) => (a.priorite || 'Z').localeCompare(b.priorite || 'Z') || String(a.company).localeCompare(String(b.company), 'fr'));
+      renderDepts();
+      render();
+    }, () => { $('status').textContent = 'Connexion au suivi interrompue : rechargez la page.'; });
+  })();
+})();
+</script>
