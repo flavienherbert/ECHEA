@@ -13,6 +13,7 @@ import { generateKeyPairSync, createPrivateKey, createPublicKey, sign, randomUUI
 import { mkdirSync, writeFileSync, readFileSync, existsSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
+import { pathToFileURL } from 'node:url';
 
 const DIR = process.env.ECHEA_KEY_DIR || join(homedir(), '.echea');
 const PRIV = join(DIR, 'license-private.pem');
@@ -46,7 +47,8 @@ export function issue({ org, email, months = 13, plan = 'pro', today = new Date(
   return { token: `${body}.${b64url(signature)}`, payload };
 }
 
-const cmd = process.argv[2];
+const isCli = process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href;
+const cmd = isCli ? process.argv[2] : undefined;
 if (cmd === 'init') {
   if (existsSync(PRIV)) {
     console.log(`Une clé existe déjà : ${PRIV}`);
