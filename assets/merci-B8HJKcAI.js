@@ -1,0 +1,1 @@
+import"./analytics-KaiVdpyL.js";import"./site-D-SMNtUL.js";var e=new URLSearchParams(location.search).get(`plan`),t={mensuel:`Abonnement mensuel`,annuel:`Abonnement annuel`,pilote:`Offre pilote : 3 mois offerts`};t[e]&&(document.getElementById(`plan-line`).textContent=t[e]+` — et ensuite ?`);

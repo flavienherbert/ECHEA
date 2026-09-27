@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Échéa — Passeport de prévention et recyclages pour organismes de formation</title>
+  <meta name="description" content="Glissez votre Excel de stagiaires : Échéa contrôle NIR, SIRET, dates et codes, génère le fichier d'import officiel du Passeport de prévention (ADF et JDR) et prépare vos relances de recyclages. Tout reste dans votre navigateur.">
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <meta property="og:title" content="Échéa — votre Excel de stagiaires, prêt pour le Passeport de prévention">
+  <meta property="og:description" content="Contrôles avant dépôt, fichier d'import officiel, relances de recyclages. 100 % dans le navigateur.">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#0f5b53">
+  <script type="module" crossorigin src="./assets/analytics-KaiVdpyL.js"></script>
+  <script type="module" crossorigin src="./assets/site-D-SMNtUL.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/site-BTPLGohI.css">
+</head>
+<body>
+  <a class="sr-only" href="#contenu">Aller au contenu</a>
+  <div class="deadline-bar" id="deadline-bar" hidden>
+    <div class="wrap"><span>Prochaine échéance du Passeport de prévention : <strong data-deadline-date></strong> pour les <span data-deadline-text></span>.</span> <a href="" data-source="calendrier" target="_blank" rel="noopener">Calendrier officiel</a></div>
+  </div>
+  <header class="site-header">
+    <div class="wrap">
+      <a class="brand" href="./" aria-label="Échéa, accueil">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="1" y="3" width="28" height="27" rx="7" fill="var(--brand)"/><path d="M8.5 17.2l4.4 4.4 9.6-10" fill="none" stroke="var(--on-brand)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="26.5" cy="5.5" r="4.5" fill="var(--accent)" stroke="var(--bg)" stroke-width="2"/></svg>
+        Échéa
+      </a>
+      <nav class="site-nav" aria-label="Navigation principale">
+        <a href="#fonctionnement">Fonctionnement</a>
+        <a href="#recyclages">Recyclages</a>
+        <a href="#tarifs">Tarifs</a>
+        <a href="#faq">FAQ</a>
+        <a class="btn btn-primary btn-small" href="./app.html" data-track="cta-header">Essayer gratuitement</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="contenu">
+    <section class="hero">
+      <div class="wrap hero-grid">
+        <div>
+          <span class="eyebrow">Organismes de formation SST, incendie, habilitation électrique, CACES</span>
+          <h1>Votre Excel de stagiaires, <em>prêt pour le Passeport de prévention</em>.</h1>
+          <p class="lead">Échéa contrôle chaque ligne avant le dépôt (NIR, nom de naissance, SIRET, dates, codes), génère le fichier d'import officiel et vous dit quelles entreprises relancer pour leurs recyclages. Le tout dans votre navigateur : vos NIR ne quittent pas votre ordinateur.</p>
+          <div class="cta-row">
+            <a class="btn btn-primary" href="./app.html" data-track="cta-hero">Essayer avec mon fichier</a>
+            <a class="btn btn-secondary" href="./app.html?demo=1" data-track="cta-demo">Voir la démo</a>
+          </div>
+          <ul class="reassure">
+            <li>Gratuit jusqu'à 25 stagiaires par fichier</li>
+            <li>Sans inscription</li>
+            <li>Rien à installer</li>
+          </ul>
+        </div>
+        <div class="card mock" aria-label="Aperçu de l'application">
+          <div class="mock-top">
+            <div class="mock-file"><span class="ico">XLSX</span><div><b>Stagiaires-T2-2026.xlsx</b><span class="muted small">142 lignes lues, colonnes reconnues</span></div></div>
+            <span class="chip chip-warn">3 à corriger</span>
+          </div>
+          <div class="mock-stats">
+            <div><b>139</b><span>prêts à déclarer</span></div>
+            <div><b>6</b><span>déclarations</span></div>
+            <div><b>31/12</b><span>date limite</span></div>
+          </div>
+          <div class="mock-row"><span class="ln">Ligne 18</span><span><b>LEROUX</b> — clé du NIR incorrecte : un chiffre a probablement été mal recopié</span></div>
+          <div class="mock-row"><span class="ln">Ligne 41</span><span><b>Garage Moreau</b> — SIRET manquant : saisissez-le une fois, il sera retenu</span></div>
+          <div class="mock-row"><span class="ln">Ligne 97</span><span><b>BERTIN</b> — formation pas encore terminée : à déclarer après sa date de fin</span></div>
+          <div class="mock-actions"><span>Télécharger le fichier JDR · 98</span><span class="alt">Fichier ADF · 41</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="probleme">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Déclarer au Passeport, c'est trois pièges.</h2>
+          <p>Depuis le 1<sup>er</sup> septembre 2025, les organismes de formation doivent déclarer dans le Passeport de prévention les formations santé-sécurité qu'ils dispensent. L'import en masse existe, mais il ne pardonne rien.</p>
+        </div>
+        <div class="grid-3">
+          <article class="card pain">
+            <h3>Un fichier rejeté en entier</h3>
+            <p>Au moindre écart sur une règle globale, le portail rejette le fichier dans sa globalité. Un SIRET mal saisi suffit.</p>
+            <a class="src" href="" data-source="guideAdf" target="_blank" rel="noopener">Guide officiel d'import (ADF)</a>
+          </article>
+          <article class="card pain">
+            <h3>NIR et nom de naissance contrôlés</h3>
+            <p>Si le couple « NIR et nom de naissance » n'est pas reconnu, la déclaration du stagiaire est rejetée. Le nom ne doit être ni modifié ni tronqué.</p>
+            <a class="src" href="" data-source="guideAdf" target="_blank" rel="noopener">Guide officiel d'import (ADF)</a>
+          </article>
+          <article class="card pain">
+            <h3>Des délais qui raccourcissent</h3>
+            <p>Formations 2026 : 6 mois après la fin du trimestre. À partir de 2027 : 3 mois. Le Code du travail prévoit une amende pouvant atteindre 2 000 € par manquement.</p>
+            <a class="src" href="" data-source="obligations" target="_blank" rel="noopener">Obligations des OF</a> · <a class="src" href="" data-source="sanction" target="_blank" rel="noopener">art. L6356-2</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="soft" id="fonctionnement">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Trois étapes, sans ressaisie.</h2>
+          <p>Échéa se branche à côté de votre fichier habituel. Pas de logiciel à adopter, pas de migration.</p>
+        </div>
+        <ol class="steps">
+          <li class="card"><h3>Déposez votre fichier tel quel</h3><p>Excel ou CSV, une ligne par stagiaire. Échéa reconnaît vos colonnes et vos intitulés de formation (« MAC SST », « H0B0 », « CACES R489 »…).</p></li>
+          <li class="card"><h3>Corrigez ce qui bloquerait</h3><p>Clé du NIR, SIRET, dates, doublons, codes manquants : chaque problème est expliqué, ligne par ligne, et se corrige sur place.</p></li>
+          <li class="card"><h3>Téléchargez le fichier officiel</h3><p>Attestations (ADF) et justificatifs de réussite (JDR), découpés par session et à 500 stagiaires maximum. Vous l'importez sur le portail avec vos accès Net-entreprises.</p></li>
+        </ol>
+      </div>
+    </section>
+
+    <section id="recyclages">
+      <div class="wrap grid-2">
+        <div>
+          <div class="section-head" style="margin-bottom:18px">
+            <h2>Et vos recyclages deviennent du chiffre d'affaires.</h2>
+            <p>Chaque import alimente le suivi : qui a été formé, quand, pour quelle entreprise. Échéa vous montre les recyclages à venir et prépare l'email pour l'entreprise qui paie la formation.</p>
+          </div>
+          <ul class="feature-list">
+            <li>MAC SST, habilitations, CACES, SSIAP, amiante : échéances calculées automatiquement.</li>
+            <li>Regroupement par entreprise cliente, avec l'email de relance prêt à envoyer depuis votre messagerie.</li>
+            <li>Rythmes de relance modifiables, formation par formation.</li>
+          </ul>
+        </div>
+        <div>
+          <div class="card recy-card">
+            <h3>Menuiserie Lefèvre</h3>
+            <span class="muted small">3 salariés à recycler</span>
+            <div class="recy-line"><span>Marie D. — MAC SST</span><span class="chip chip-danger">avant le 18/11</span></div>
+            <div class="recy-line"><span>Karim B. — MAC SST</span><span class="chip chip-danger">avant le 18/11</span></div>
+            <div class="recy-line"><span>Paul M. — Habilitation électrique</span><span class="chip chip-warn">avant le 04/02</span></div>
+          </div>
+          <p class="roi">Exemple : un organisme affiche un MAC SST intra à partir de 650 € HT la session de 10 stagiaires. Une seule session relancée à temps couvre près de deux ans d'abonnement. <a class="src" href="https://sst-formation.info/recyclage-sst" target="_blank" rel="noopener">Source du tarif</a></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="soft" id="confidentialite">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Vos NIR restent chez vous.</h2>
+          <p>Échéa fonctionne entièrement dans votre navigateur. C'est ce qui permet de traiter des numéros de sécurité sociale sans les confier à personne.</p>
+        </div>
+        <div class="privacy">
+          <div class="card"><h3>Aucun envoi</h3><p>Votre fichier est lu et transformé sur votre ordinateur. Rien n'est transmis à un serveur, pas même à Échéa.</p></div>
+          <div class="card"><h3>Aucun NIR conservé</h3><p>Les NIR servent au moment de l'export, puis disparaissent. Seul le suivi des recyclages reste sur votre poste, effaçable en un clic.</p></div>
+          <div class="card"><h3>Code vérifiable</h3><p>Le code source est public. Un prestataire ou votre DPO peut vérifier qu'aucune donnée ne sort. <a href="" data-repo target="_blank" rel="noopener">Voir le code</a></p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tarifs">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Un prix d'outil, pas de logiciel complet.</h2>
+          <p>Testez gratuitement sur une vraie session. Passez en Pro quand vous déclarez tous vos stagiaires.</p>
+        </div>
+        <div class="pricing">
+          <div class="card plan">
+            <h3>Gratuit</h3>
+            <div class="price">0 €</div>
+            <span class="muted">Pour tester sur une vraie session</span>
+            <ul>
+              <li>Contrôles illimités avant dépôt</li>
+              <li>Fichier officiel jusqu'à 25 stagiaires</li>
+              <li>Suivi des recyclages</li>
+              <li>Emails de relance pour 3 entreprises</li>
+            </ul>
+            <a class="btn btn-secondary" href="./app.html" data-track="cta-free">Commencer</a>
+          </div>
+          <div class="card plan featured">
+            <h3>Pro <span class="chip chip-brand">Recommandé</span></h3>
+            <div class="price"><span data-price-monthly>29</span> € <small>HT / mois</small></div>
+            <span class="muted">Sans engagement, ou <b><span data-price-yearly>290</span> € HT / an</b> (2 mois offerts)</span>
+            <ul>
+              <li>Fichiers ADF et JDR illimités</li>
+              <li>Découpage automatique à 500 stagiaires</li>
+              <li>Relances de recyclage illimitées et export Excel</li>
+              <li>Réponse par email sous 24 h ouvrées</li>
+            </ul>
+            <a class="btn btn-primary" href="" data-pay="monthly" data-track="pay-monthly">Choisir le mensuel</a>
+            <a class="btn btn-secondary" href="" data-pay="yearly" data-track="pay-yearly">Choisir l'annuel</a>
+          </div>
+        </div>
+        <p class="pay-note">Paiement sécurisé par Stripe, facture à votre organisme. Votre clé de licence vous est envoyée par email sous 24 h ouvrées. <span class="test-mode" data-test-mode hidden>Paiements en mode test : aucune carte n'est débitée.</span></p>
+      </div>
+    </section>
+
+    <section class="soft" id="faq">
+      <div class="wrap faq">
+        <div class="section-head"><h2>Questions fréquentes</h2></div>
+        <details><summary>Échéa déclare-t-il à ma place ?</summary><p>Non. Le portail ne documente aucune interface de dépôt automatique : vous importez vous-même le fichier sur le Passeport de prévention, avec vos accès Net-entreprises. Échéa prépare un fichier propre et vous gardez la main sur la déclaration.</p></details>
+        <details><summary>SST : attestation de formation ou justificatif de réussite ?</summary><p>La FAQ officielle demande de ne déclarer que le justificatif de réussite quand une formation donne lieu aux deux. Échéa range donc par défaut les stagiaires reçus au SST dans le fichier JDR (certificat) et les autres dans le fichier ADF. Ce réglage se change formation par formation. <a href="" data-source="types" target="_blank" rel="noopener">FAQ officielle</a></p></details>
+        <details><summary>Où trouver les codes ROME, Formacode et NSF ?</summary><p>Dans les fiches pratiques officielles du portail. Vous les saisissez une fois par formation dans Échéa, qui contrôle leur format (3 à 10 compétences, 1 à 5 Formacodes, 1 à 3 codes NSF) et les réutilise à chaque export. <a href="" data-source="fiches" target="_blank" rel="noopener">Fiches pratiques</a></p></details>
+        <details><summary>Et si un stagiaire n'a pas donné son NIR ?</summary><p>Le NIR est obligatoire. En cas de refus, la FAQ officielle demande de conserver une trace écrite : c'est alors à l'employeur de renseigner le passeport. Échéa écarte la ligne du fichier et vous la signale. <a href="" data-source="nir" target="_blank" rel="noopener">FAQ officielle</a></p></details>
+        <details><summary>Mes données sont-elles envoyées quelque part ?</summary><p>Non. Le fichier est traité dans votre navigateur et les NIR ne sont jamais enregistrés. Le suivi des recyclages (nom, entreprise, formation, date) reste dans le stockage local de votre navigateur, et le bouton « Tout effacer » le supprime.</p></details>
+        <details><summary>J'utilise déjà Digiforma, Dendreo ou Ypareo.</summary><p>Ces logiciels proposent leur propre export Passeport. Échéa s'adresse aux organismes qui travaillent sous Excel, ou avec un outil qui n'exporte pas encore vers le Passeport.</p></details>
+        <details><summary>Les durées de recyclage sont-elles des obligations légales ?</summary><p>Pas toutes. Certificat SST valable 24 mois, recyclage d'habilitation électrique conseillé tous les 3 ans, CACES 5 ou 10 ans : ce sont des référentiels et des recommandations de l'INRS. Échéa les propose par défaut et vous les ajustez.</p></details>
+        <details><summary>Quels fichiers puis-je importer ?</summary><p>Des fichiers Excel (.xlsx) ou CSV, exportés d'Excel, de LibreOffice ou de Google Sheets. Une ligne par stagiaire, avec au minimum le nom de naissance, le NIR, la formation et les dates.</p></details>
+        <details><summary>Comment recevoir et activer ma clé Pro ?</summary><p>Après le paiement, vous recevez votre clé de licence par email sous 24 h ouvrées. Collez-la dans Échéa, onglet Réglages. Vous pouvez résilier à tout moment ; l'abonnement s'arrête à la fin de la période en cours.</p></details>
+      </div>
+    </section>
+
+    <section class="final-cta">
+      <div class="wrap">
+        <h2>Testez sur votre dernière session.</h2>
+        <p class="muted">Deux minutes, sans inscription, sans envoyer vos données.</p>
+        <div class="cta-row"><a class="btn btn-primary" href="./app.html" data-track="cta-final">Essayer avec mon fichier</a><a class="btn btn-secondary" href="./app.html?demo=1" data-track="cta-final-demo">Voir la démo</a></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <nav aria-label="Liens légaux">
+        <a href="./mentions-legales.html">Mentions légales</a>
+        <a href="./cgv.html">CGV</a>
+        <a href="./confidentialite.html">Confidentialité</a>
+        <a href="" data-contact>Contact</a>
+        <a href="" data-repo target="_blank" rel="noopener">Code source</a>
+      </nav>
+      <p>Échéa est un outil indépendant, sans lien avec le ministère du Travail ni la Caisse des Dépôts. © 2026 Échéa.</p>
+    </div>
+  </footer>
+</body>
+</html>
